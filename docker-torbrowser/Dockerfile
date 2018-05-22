@@ -1,13 +1,13 @@
 # tor browser
 #
 #
-FROM debian:jessie
+FROM debian:stretch
 LABEL maintainer "Jens Binkert <jensbin+git@pm.me>"
 
 ENV DEBIAN_FRONTEND=noninteractive TORVERSION=7.5.4 \
     HOME=/home/anon TORGPGKEY=EF6E286DDA85EA2A4BA7DE684E2C6E8793298290
 
-RUN sed -i.bak 's/jessie main/jessie main contrib/g' /etc/apt/sources.list && \
+RUN sed -i.bak 's/stretch main/stretch main contrib/g' /etc/apt/sources.list && \
   apt-get update && \
   apt-get -y dist-upgrade && \
   apt-get install -y \
