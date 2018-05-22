@@ -1,9 +1,10 @@
-FROM debian:jessie
+FROM debian:stretch
 LABEL maintainer "Jens Binkert <jensbin+git@pm.me>"
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive \
+    GPGKEY=1C61A2656FB57B7E4DE0F4C1FC918B335044912E
 
-RUN sed -i.bak 's/jessie main/jessie main contrib/g' /etc/apt/sources.list && \
+RUN sed -i.bak 's/stretch main/stretch main contrib/g' /etc/apt/sources.list && \
   apt-get update && \
   apt-get -y dist-upgrade && \
   apt-get install -y \
@@ -26,13 +27,14 @@ RUN sed -i.bak 's/jessie main/jessie main contrib/g' /etc/apt/sources.list && \
   && rm -rf /var/lib/apt/lists/*
 
 ENV LANG C.UTF-8
-COPY local.conf /etc/fonts/local.conf
-
 
 # Following 'How do I add or remove Dropbox from my Linux repository?' - https://www.dropbox.com/en/help/246
 RUN cd /tmp && set -x \
   && echo 'deb http://linux.dropbox.com/debian jessie main' > /etc/apt/sources.list.d/dropbox.list \
-  && apt-key adv --keyserver pgp.mit.edu --recv-keys 1C61A2656FB57B7E4DE0F4C1FC918B335044912E \
+  && apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys "${GPGKEY}" \
+  || apt-key adv --keyserver pool.sks-keyservers.net --recv-keys "${GPGKEY}" \
+  || apt-key adv --keyserver keyserver.pgp.com --recv-keys "${GPGKEY}" \
+  || apt-key adv --keyserver pgp.mit.edu --recv-keys "${GPGKEY}" \
   && apt-get -qqy update \
   # Note 'ca-certificates' dependency is required for 'dropbox start -i' to succeed
   && apt-get -qqy install dropbox \
