@@ -2,7 +2,8 @@ FROM debian:stretch
 LABEL maintainer "Jens Binkert <jensbin+git@pm.me>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    GPGKEY=1C61A2656FB57B7E4DE0F4C1FC918B335044912E
+    GPGKEY=1C61A2656FB57B7E4DE0F4C1FC918B335044912E \
+    DROPBOXVERSION=55.4.171
 
 RUN sed -i.bak 's/stretch main/stretch main contrib/g' /etc/apt/sources.list && \
   apt-get update && \
@@ -70,6 +71,12 @@ RUN mkdir -p /opt/dropbox \
   && chmod g-w /tmp \
   # Prepare for command line wrapper
   && mv /usr/bin/dropbox /usr/bin/dropbox-cli
+
+RUN mkdir /tmp/ltdb \
+  && curl -# -L https://clientupdates.dropboxstatic.com/dbx-releng/client/dropbox-lnx.x86_64-${DROPBOXVERSION}.tar.gz | tar xzf - -C /tmp/ltdb \
+  && rm -rf /opt/dropbox/* \
+  && mv /tmp/ltdb/.dropbox-dist/* /opt/dropbox/ \
+  && rm -rf /tmp/ltdb
 
 # Install init script and dropbox command line wrapper
 COPY run /dbox/

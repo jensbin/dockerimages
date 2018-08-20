@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 #
-docker pull debian:latest
+docker pull debian:stretch
 docker build -t jensbin/dropbox:latest .
 
 docker rm $(docker ps -aq 2>/dev/null) 2>/dev/null
